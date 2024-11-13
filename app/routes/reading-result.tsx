@@ -1,0 +1,182 @@
+import { useSearchParams, useNavigate } from 'react-router';
+import { useEffect } from 'react';
+import { motion } from 'framer-motion';
+import type { Route } from './+types/reading-result';
+import { useTarotContext } from '~/lib/TarotContext';
+import type { DrawnCard } from '~/types/tarot';
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: '타로 리딩 - 결과' },
+    { name: 'description', content: '타로 리딩 결과를 확인하세요.' },
+  ];
+}
+
+function DrawnCardComponent({ drawnCard, index }: { drawnCard: DrawnCard; index: number }) {
+  const { card, position, isReversed } = drawnCard;
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50, rotateX: -90 }}
+      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+      transition={{ 
+        duration: 0.6, 
+        delay: index * 0.3,
+        ease: "easeOut"
+      }}
+      className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6 mb-6"
+    >
+      {/* Position Header */}
+      <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+        <h3 className="text-xl font-semibold text-white">
+          {position.nameKo}
+        </h3>
+        <span className="text-sm text-purple-200 italic">
+          {position.descriptionKo}
+        </span>
+      </div>
+
+      {/* Card Display */}
+      <div className="flex gap-6 items-start">
+        {/* Card Visual */}
+        <motion.div
+          className={`w-24 h-36 bg-gradient-to-br ${
+            isReversed 
+              ? 'from-red-500 to-orange-500'
+              : 'from-purple-600 to-indigo-600'
+          } rounded-xl border-2 border-white/30 flex flex-col items-center justify-center text-white font-semibold text-center shadow-xl relative ${
+            isReversed ? 'rotate-180' : ''
+          }`}
+          whileHover={{ scale: 1.05 }}
+        >
+          <div className="text-2xl mb-2">🔮</div>
+          <div className="text-xs leading-tight px-2">
+            {card.nameKo}
+          </div>
+          {isReversed && (
+            <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+              R
+            </div>
+          )}
+        </motion.div>
+
+        {/* Card Information */}
+        <div className="flex-1">
+          <div className="mb-4">
+            <h4 className="text-lg font-semibold text-white mb-1">
+              {card.nameKo} {isReversed ? '(역방향)' : '(정방향)'}
+            </h4>
+            <p className="text-sm text-purple-200 italic">
+              {card.name}
+            </p>
+          </div>
+
+          {/* Keywords */}
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2 mb-2">
+              {card.keywordsKo.slice(0, 3).map((keyword, idx) => (
+                <span 
+                  key={idx}
+                  className="bg-purple-500/30 text-purple-100 px-3 py-1 rounded-full text-sm"
+                >
+                  {keyword}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Meaning */}
+          <div>
+            <p className="text-purple-100 leading-relaxed">
+              {isReversed ? card.meaningKo.reversed : card.meaningKo.upright}
+            </p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function ReadingResult() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { getReading } = useTarotContext();
+  const readingId = searchParams.get('readingId') || '';
+  
+  const reading = getReading(readingId);
+
+  useEffect(() => {
+    if (!reading) {
+      navigate('/');
+    }
+  }, [reading, navigate]);
+
+  if (!reading) {
+    return null;
+  }
+
+  const handleNewReading = () => {
+    navigate('/');
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 p-4">
+      <div className="max-w-4xl mx-auto py-8">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-8"
+        >
+          <h1 className="text-4xl font-bold text-white mb-4">
+            {reading.spread.nameKo} 리딩 결과
+          </h1>
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 p-4 max-w-2xl mx-auto mb-4">
+            <p className="text-purple-100 italic text-lg">
+              "{reading.question}"
+            </p>
+            <p className="text-sm text-purple-200 mt-2">
+              {new Date(reading.timestamp).toLocaleString('ko-KR')}
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Cards */}
+        <div className="mb-8">
+          {reading.drawnCards.map((drawnCard, index) => (
+            <DrawnCardComponent 
+              key={`${drawnCard.card.id}-${drawnCard.position.id}`}
+              drawnCard={drawnCard} 
+              index={index}
+            />
+          ))}
+        </div>
+
+        {/* Summary & Actions */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: reading.drawnCards.length * 0.3 + 0.5 }}
+          className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 text-center"
+        >
+          <h3 className="text-2xl font-semibold text-white mb-4">
+            리딩을 마치며
+          </h3>
+          <p className="text-purple-100 mb-6 leading-relaxed max-w-2xl mx-auto">
+            타로는 하나의 안내일 뿐입니다. 
+            최종적인 선택과 결정은 언제나 당신의 몫입니다. 
+            긍정적인 마음으로 미래를 만들어 나가세요.
+          </p>
+          <motion.button
+            onClick={handleNewReading}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
+          >
+            새로운 리딩 시작하기
+          </motion.button>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
