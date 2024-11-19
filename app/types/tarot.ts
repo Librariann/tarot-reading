@@ -42,10 +42,24 @@ export interface TarotReading {
   spread: TarotSpread;
   drawnCards: DrawnCard[];
   timestamp: Date;
+  aiInterpretation?: AITarotInterpretation;
 }
 
 export interface DrawnCard {
   card: TarotCard;
   position: SpreadPosition;
   isReversed: boolean;
+}
+
+export interface AITarotInterpretation {
+  overallReading: string;
+  cardInterpretations: {
+    cardName: string;
+    position: string;
+    isReversed: boolean;
+    interpretation: string;
+    significance: string;
+  }[];
+  advice: string;
+  summary: string;
 }
