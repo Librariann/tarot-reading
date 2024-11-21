@@ -7,12 +7,16 @@ interface CardSelectionGridProps {
   requiredCount: number;
   onSelectionChange: (selectedCards: TarotCard[]) => void;
   onConfirm: (selectedCards: TarotCard[]) => void;
+  isLoading?: boolean;
+  error?: string | null;
 }
 
 export function CardSelectionGrid({ 
   requiredCount, 
   onSelectionChange, 
-  onConfirm 
+  onConfirm,
+  isLoading = false,
+  error = null
 }: CardSelectionGridProps) {
   const [isShuffling, setIsShuffling] = useState(true);
   const [shuffledCards, setShuffledCards] = useState<TarotCard[]>([]);
@@ -237,7 +241,23 @@ export function CardSelectionGrid({
         ))}
       </motion.div>
 
-      {/* Confirmation Button */}
+      {/* Error Message */}
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="text-center mb-6"
+          >
+            <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 text-red-200">
+              <p className="text-sm">{error}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Confirmation Button / Loading State */}
       <AnimatePresence>
         {!isShuffling && canConfirm && (
           <motion.div
@@ -246,14 +266,32 @@ export function CardSelectionGrid({
             exit={{ opacity: 0, y: 50 }}
             className="text-center"
           >
-            <motion.button
-              onClick={() => onConfirm(selectedCards)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
-            >
-              선택 완료 - 결과 보기
-            </motion.button>
+            {isLoading ? (
+              <motion.div
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg flex items-center justify-center gap-3"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  className="text-2xl"
+                >
+                  🔮
+                </motion.div>
+                <span>AI가 타로를 해석하는 중...</span>
+              </motion.div>
+            ) : (
+              <motion.button
+                onClick={() => onConfirm(selectedCards)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
+                disabled={isLoading}
+              >
+                선택 완료 - AI 타로 리딩 받기
+              </motion.button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
