@@ -5,6 +5,7 @@ import type { Route } from './+types/draw-cards';
 import { tarotSpreads } from '~/data/tarotSpreads';
 import { useTarotContext } from '~/lib/TarotContext';
 import { CardSelectionGrid } from '~/components/CardSelectionGrid';
+import { generateTarotReading } from '~/lib/aiTarotService';
 import type { TarotCard, TarotReading, DrawnCard } from '~/types/tarot';
 
 export function meta({}: Route.MetaArgs) {
@@ -21,6 +22,8 @@ export default function DrawCards() {
   const spreadId = searchParams.get('spreadId') || '';
   const { addReading } = useTarotContext();
   const [selectedCards, setSelectedCards] = useState<TarotCard[]>([]);
+  const [isGeneratingReading, setIsGeneratingReading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const spread = tarotSpreads.find(s => s.id === spreadId);
 
@@ -32,33 +35,48 @@ export default function DrawCards() {
 
   const handleSelectionChange = (cards: TarotCard[]) => {
     setSelectedCards(cards);
+    setError(null); // Clear any previous errors
   };
 
-  const handleConfirm = (cards: TarotCard[]) => {
+  const handleConfirm = async (cards: TarotCard[]) => {
     if (!spread || !question || cards.length !== spread.cardCount) return;
     
-    // Create drawn cards with random reversed state
-    const drawnCards: DrawnCard[] = cards.map((card, index) => ({
-      card,
-      position: spread.positions[index],
-      isReversed: Math.random() < 0.3 // 30% chance of reversed card
-    }));
-
-    // Create reading
-    const reading: TarotReading = {
-      id: Date.now().toString(),
-      question,
-      spread,
-      drawnCards,
-      timestamp: new Date()
-    };
-
-    addReading(reading);
+    setIsGeneratingReading(true);
+    setError(null);
     
-    // Navigate to results
-    const params = new URLSearchParams();
-    params.set('readingId', reading.id);
-    navigate(`/reading-result?${params.toString()}`);
+    try {
+      // Create drawn cards with random reversed state
+      const drawnCards: DrawnCard[] = cards.map((card, index) => ({
+        card,
+        position: spread.positions[index],
+        isReversed: Math.random() < 0.3 // 30% chance of reversed card
+      }));
+
+      // Create basic reading
+      const reading: TarotReading = {
+        id: Date.now().toString(),
+        question,
+        spread,
+        drawnCards,
+        timestamp: new Date()
+      };
+
+      // Generate AI interpretation
+      const aiInterpretation = await generateTarotReading(reading);
+      reading.aiInterpretation = aiInterpretation;
+
+      addReading(reading);
+      
+      // Navigate to results
+      const params = new URLSearchParams();
+      params.set('readingId', reading.id);
+      navigate(`/reading-result?${params.toString()}`);
+      
+    } catch (error) {
+      console.error('AI 리딩 생성 오류:', error);
+      setError('타로 리딩을 생성하는 중 오류가 발생했습니다. AI 서비스 설정을 확인해주세요.');
+      setIsGeneratingReading(false);
+    }
   };
 
   if (!question || !spread) {
@@ -112,6 +130,8 @@ export default function DrawCards() {
             requiredCount={spread.cardCount}
             onSelectionChange={handleSelectionChange}
             onConfirm={handleConfirm}
+            isLoading={isGeneratingReading}
+            error={error}
           />
         </motion.div>
 
