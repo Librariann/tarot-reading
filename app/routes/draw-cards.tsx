@@ -1,37 +1,35 @@
-import { useSearchParams, useNavigate } from 'react-router';
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import type { Route } from './+types/draw-cards';
-import { tarotSpreads } from '~/data/tarotSpreads';
-import { useTarotContext } from '~/lib/TarotContext';
-import { CardSelectionGrid } from '~/components/CardSelectionGrid';
-import { generateTarotReading } from '~/lib/aiTarotService';
-import type { TarotCard, TarotReading, DrawnCard } from '~/types/tarot';
+import { useSearchParams, useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import type { Route } from "./+types/draw-cards";
+import { tarotSpreads } from "~/data/tarotSpreads";
+import { CardSelectionGrid } from "~/components/CardSelectionGrid";
+import type { TarotCard, TarotReading, DrawnCard } from "~/types/tarot";
+
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: '타로 리딩 - 카드 뽑기' },
-    { name: 'description', content: '카드를 뽑아서 운세를 확인하세요.' },
+    { title: "오늘 뭐 뽑지? - 카드 뽑기" },
+    { name: "description", content: "카드를 뽑아서 운세를 확인하세요." },
   ];
 }
 
 export default function DrawCards() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const question = searchParams.get('question') || '';
-  const spreadId = searchParams.get('spreadId') || '';
-  const { addReading } = useTarotContext();
+  const question = searchParams.get("question") || "";
+  const spreadId = searchParams.get("spreadId") || "";
   const [selectedCards, setSelectedCards] = useState<TarotCard[]>([]);
-  const [isGeneratingReading, setIsGeneratingReading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const spread = tarotSpreads.find(s => s.id === spreadId);
+  const spread = tarotSpreads.find((s) => s.id === spreadId);
 
   useEffect(() => {
     if (!question || !spread) {
-      navigate('/');
+      navigate("/");
     }
   }, [question, spread, navigate]);
+
 
   const handleSelectionChange = (cards: TarotCard[]) => {
     setSelectedCards(cards);
@@ -40,16 +38,15 @@ export default function DrawCards() {
 
   const handleConfirm = async (cards: TarotCard[]) => {
     if (!spread || !question || cards.length !== spread.cardCount) return;
-    
-    setIsGeneratingReading(true);
+
     setError(null);
-    
+
     try {
       // Create drawn cards with random reversed state
       const drawnCards: DrawnCard[] = cards.map((card, index) => ({
         card,
         position: spread.positions[index],
-        isReversed: Math.random() < 0.3 // 30% chance of reversed card
+        isReversed: Math.random() < 0.3, // 30% chance of reversed card
       }));
 
       // Create basic reading
@@ -58,24 +55,18 @@ export default function DrawCards() {
         question,
         spread,
         drawnCards,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
-      // Generate AI interpretation
-      const aiInterpretation = await generateTarotReading(reading);
-      reading.aiInterpretation = aiInterpretation;
-
-      addReading(reading);
-      
-      // Navigate to results
+      // Navigate to card reveal page with reading data
       const params = new URLSearchParams();
-      params.set('readingId', reading.id);
-      navigate(`/reading-result?${params.toString()}`);
-      
+      params.set("reading", encodeURIComponent(JSON.stringify(reading)));
+      navigate(`/reveal-cards?${params.toString()}`);
     } catch (error) {
-      console.error('AI 리딩 생성 오류:', error);
-      setError('타로 리딩을 생성하는 중 오류가 발생했습니다. AI 서비스 설정을 확인해주세요.');
-      setIsGeneratingReading(false);
+      console.error("카드 생성 오류:", error);
+      setError(
+        "카드를 생성하는 중 오류가 발생했습니다. 다시 시도해주세요."
+      );
     }
   };
 
@@ -96,13 +87,9 @@ export default function DrawCards() {
             {spread.nameKo} 리딩
           </h1>
           <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 p-4 max-w-2xl mx-auto mb-4">
-            <p className="text-purple-100 italic">
-              "{question}"
-            </p>
+            <p className="text-purple-100 italic">"{question}"</p>
           </div>
-          <p className="text-purple-200">
-            {spread.descriptionKo}
-          </p>
+          <p className="text-purple-200">{spread.descriptionKo}</p>
         </motion.div>
 
         {/* Navigation */}
@@ -113,7 +100,11 @@ export default function DrawCards() {
           className="flex items-center justify-center mb-8"
         >
           <button
-            onClick={() => navigate(`/select-spread?question=${encodeURIComponent(question)}`)}
+            onClick={() =>
+              navigate(
+                `/select-spread?question=${encodeURIComponent(question)}`
+              )
+            }
             className="text-purple-200 hover:text-white transition-colors flex items-center gap-2"
           >
             ← 스프레드 변경하기
@@ -130,7 +121,7 @@ export default function DrawCards() {
             requiredCount={spread.cardCount}
             onSelectionChange={handleSelectionChange}
             onConfirm={handleConfirm}
-            isLoading={isGeneratingReading}
+            isLoading={false}
             error={error}
           />
         </motion.div>
