@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import type { TarotCard } from '~/types/tarot';
-import { tarotCards } from '~/data/tarotCards';
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import type { TarotCard } from "~/types/tarot";
+import { tarotCards } from "~/data/tarotCards";
 
 interface CardSelectionGridProps {
   requiredCount: number;
@@ -11,12 +11,12 @@ interface CardSelectionGridProps {
   error?: string | null;
 }
 
-export function CardSelectionGrid({ 
-  requiredCount, 
-  onSelectionChange, 
+export function CardSelectionGrid({
+  requiredCount,
+  onSelectionChange,
   onConfirm,
   isLoading = false,
-  error = null
+  error = null,
 }: CardSelectionGridProps) {
   const [isShuffling, setIsShuffling] = useState(true);
   const [shuffledCards, setShuffledCards] = useState<TarotCard[]>([]);
@@ -41,11 +41,11 @@ export function CardSelectionGrid({
     // More realistic shuffle animation - faster intervals, multiple passes
     let shuffleCount = 0;
     const maxShuffles = 15;
-    
+
     shuffleIntervalRef.current = setInterval(() => {
-      setShuffledCards(prev => shuffleArray([...prev]));
+      setShuffledCards((prev) => shuffleArray([...prev]));
       shuffleCount++;
-      
+
       if (shuffleCount >= maxShuffles) {
         if (shuffleIntervalRef.current) {
           clearInterval(shuffleIntervalRef.current);
@@ -69,7 +69,7 @@ export function CardSelectionGrid({
       // Select card and mark as extracted
       const newSelectedCards = [...selectedCards, card];
       const newExtractedCards = new Set(extractedCards).add(card.id);
-      
+
       setSelectedCards(newSelectedCards);
       setExtractedCards(newExtractedCards);
       onSelectionChange(newSelectedCards);
@@ -94,21 +94,19 @@ export function CardSelectionGrid({
             className="text-center mb-8"
           >
             <motion.div
-              animate={{ 
+              animate={{
                 rotateZ: 360,
-                scale: [1, 1.2, 1] 
+                scale: [1, 1.2, 1],
               }}
-              transition={{ 
+              transition={{
                 rotateZ: { duration: 2, repeat: Infinity, ease: "linear" },
-                scale: { duration: 1, repeat: Infinity }
+                scale: { duration: 1, repeat: Infinity },
               }}
               className="text-6xl mb-4"
             >
               🃏
             </motion.div>
-            <p className="text-white text-lg">
-              카드를 섞는 중...
-            </p>
+            <p className="text-white text-lg">카드를 섞는 중...</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -136,16 +134,16 @@ export function CardSelectionGrid({
                 {selectedCards[index] ? (
                   <motion.div
                     initial={{ scale: 0.3, y: 300 }}
-                    animate={{ 
-                      scale: 1, 
-                      y: 0
+                    animate={{
+                      scale: 1,
+                      y: 0,
                     }}
-                    transition={{ 
-                      type: "spring", 
-                      stiffness: 200, 
+                    transition={{
+                      type: "spring",
+                      stiffness: 200,
                       damping: 25,
                       delay: 0.1,
-                      duration: 0.8
+                      duration: 0.8,
                     }}
                     className="w-24 h-36 rounded-xl border-2 border-yellow-400 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 shadow-2xl shadow-yellow-500/50 relative"
                   >
@@ -158,19 +156,21 @@ export function CardSelectionGrid({
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* Position number indicator */}
                     <div className="absolute -top-3 -left-3 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-black font-bold text-sm border-2 border-white">
                       {index + 1}
                     </div>
-                    
+
                     {/* Mystery glow effect */}
                     <div className="absolute inset-0 rounded-xl border-2 border-yellow-400/20 animate-pulse"></div>
                   </motion.div>
                 ) : (
                   <div className="w-24 h-36 rounded-xl border-2 border-dashed border-white/30 bg-white/5 flex items-center justify-center">
                     <div className="text-white/50 text-sm text-center">
-                      {index + 1}번째<br />카드
+                      {index + 1}번째
+                      <br />
+                      카드
                     </div>
                   </div>
                 )}
@@ -207,19 +207,19 @@ export function CardSelectionGrid({
               // Available card
               <motion.div
                 initial={{ scale: 0, rotate: 180 }}
-                animate={{ 
-                  scale: 1, 
+                animate={{
+                  scale: 1,
                   rotate: 0,
                   x: isShuffling ? Math.sin(Date.now() / 200 + index) * 3 : 0,
-                  y: isShuffling ? Math.cos(Date.now() / 200 + index) * 3 : 0
+                  y: isShuffling ? Math.cos(Date.now() / 200 + index) * 3 : 0,
                 }}
-                transition={{ 
+                transition={{
                   delay: isShuffling ? 0 : index * 0.02,
                   type: "spring",
                   stiffness: 200,
-                  damping: 15
+                  damping: 15,
                 }}
-                className={`relative cursor-pointer ${isShuffling ? 'pointer-events-none' : ''}`}
+                className={`relative cursor-pointer ${isShuffling ? "pointer-events-none" : ""}`}
                 onClick={() => handleCardClick(card)}
                 whileHover={!isShuffling ? { scale: 1.1, y: -10 } : undefined}
                 whileTap={!isShuffling ? { scale: 0.95 } : undefined}
@@ -289,7 +289,7 @@ export function CardSelectionGrid({
                 className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
                 disabled={isLoading}
               >
-                선택 완료 - AI 타로 리딩 받기
+                선택 완료 - AI 오늘 뭐 뽑지? 받기
               </motion.button>
             )}
           </motion.div>
