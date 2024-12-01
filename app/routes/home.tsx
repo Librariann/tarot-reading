@@ -1,23 +1,28 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { motion } from 'framer-motion';
-import type { Route } from './+types/home';
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { motion } from "framer-motion";
+import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: '타로 리딩 - 질문하기' },
-    { name: 'description', content: '궁금한 것을 물어보세요. 타로가 답해드립니다.' },
+    { title: "오늘 뭐 뽑지? - 질문하기" },
+    {
+      name: "description",
+      content: "궁금한 것을 물어보세요. 타로가 답해드립니다.",
+    },
   ];
 }
 
 export default function Home() {
-  const [question, setQuestion] = useState('');
+  const [question, setQuestion] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (question.trim()) {
-      navigate(`/select-spread?question=${encodeURIComponent(question.trim())}`);
+      navigate(
+        `/select-spread?question=${encodeURIComponent(question.trim())}`
+      );
     }
   };
 
@@ -40,11 +45,9 @@ export default function Home() {
             🔮
           </motion.div>
           <h1 className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-yellow-200 to-pink-200 bg-clip-text text-transparent">
-            타로 리딩
+            오늘 뭐 뽑지?
           </h1>
-          <p className="text-xl text-purple-100">
-            당신의 미래를 들여다보세요
-          </p>
+          <p className="text-xl text-purple-100">당신의 미래를 들여다보세요</p>
         </div>
 
         {/* Question Form */}
@@ -55,9 +58,9 @@ export default function Home() {
           className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 shadow-2xl"
         >
           <h2 className="text-2xl font-semibold text-white mb-6 text-center">
-            타로 리딩을 시작하세요
+            당신의 운세를 점 쳐보세요!
           </h2>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <textarea
@@ -73,7 +76,7 @@ export default function Home() {
                 </span>
               </div>
             </div>
-            
+
             <motion.button
               type="submit"
               disabled={!question.trim()}
@@ -81,8 +84,8 @@ export default function Home() {
               whileTap={{ scale: question.trim() ? 0.95 : 1 }}
               className={`w-full py-4 px-8 rounded-xl font-semibold text-lg transition-all ${
                 question.trim()
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl'
-                  : 'bg-gray-500/50 text-gray-300 cursor-not-allowed'
+                  ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl"
+                  : "bg-gray-500/50 text-gray-300 cursor-not-allowed"
               }`}
             >
               다음 단계로

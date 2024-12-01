@@ -1,30 +1,48 @@
-import { useSearchParams, useNavigate } from 'react-router';
-import { motion } from 'framer-motion';
-import type { Route } from './+types/select-spread';
-import { tarotSpreads } from '~/data/tarotSpreads';
-import type { TarotSpread } from '~/types/tarot';
+import { useSearchParams, useNavigate } from "react-router";
+import { motion } from "framer-motion";
+import type { Route } from "./+types/select-spread";
+import { tarotSpreads } from "~/data/tarotSpreads";
+import type { TarotSpread } from "~/types/tarot";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: '타로 리딩 - 스프레드 선택' },
-    { name: 'description', content: '원하는 스프레드를 선택하세요.' },
+    { title: "오늘 뭐 뽑지? - 스프레드 선택" },
+    { name: "description", content: "원하는 스프레드를 선택하세요." },
   ];
 }
 
 export default function SelectSpread() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const question = searchParams.get('question') || '';
+  const question = searchParams.get("question") || "";
 
-  const handleSpreadSelect = (spread: TarotSpread) => {
-    const params = new URLSearchParams();
-    params.set('question', question);
-    params.set('spreadId', spread.id);
-    navigate(`/draw-cards?${params.toString()}`);
+  const handleSpreadSelect = (
+    spread: TarotSpread,
+    event?: React.MouseEvent
+  ) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (!question.trim()) {
+      console.error("Question is empty");
+      navigate("/");
+      return;
+    }
+
+    try {
+      const params = new URLSearchParams();
+      params.set("question", question.trim());
+      params.set("spreadId", spread.id);
+      navigate(`/draw-cards?${params.toString()}`);
+    } catch (error) {
+      console.error("Navigation error:", error);
+    }
   };
 
   if (!question) {
-    navigate('/');
+    navigate("/");
     return null;
   }
 
@@ -41,9 +59,7 @@ export default function SelectSpread() {
             스프레드를 선택하세요
           </h1>
           <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 p-4 max-w-2xl mx-auto">
-            <p className="text-purple-100 italic">
-              "{question}"
-            </p>
+            <p className="text-purple-100 italic">"{question}"</p>
           </div>
         </motion.div>
 
@@ -55,7 +71,7 @@ export default function SelectSpread() {
           className="flex items-center justify-center mb-8"
         >
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="text-purple-200 hover:text-white transition-colors flex items-center gap-2"
           >
             ← 질문 수정하기
@@ -67,12 +83,13 @@ export default function SelectSpread() {
           {tarotSpreads.map((spread, index) => (
             <motion.button
               key={spread.id}
+              type="button"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 + 0.3 }}
               whileHover={{ scale: 1.02, y: -5 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleSpreadSelect(spread)}
+              onClick={(event) => handleSpreadSelect(spread, event)}
               className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-8 shadow-2xl text-left hover:bg-white/15 transition-all group"
             >
               <div className="flex items-center justify-between mb-4">
@@ -83,11 +100,11 @@ export default function SelectSpread() {
                   {spread.cardCount}장
                 </span>
               </div>
-              
+
               <p className="text-purple-100 mb-6 leading-relaxed">
                 {spread.descriptionKo}
               </p>
-              
+
               <div className="space-y-3">
                 <h4 className="text-white font-medium text-sm">포지션:</h4>
                 <div className="flex flex-wrap gap-2">
