@@ -15,4 +15,4 @@
 # Claude settings
 .claude/
 
-/public/tarot_card/*
+# /public/tarot_card/*
