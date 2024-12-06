@@ -36,6 +36,9 @@ export async function generateTarotReading(
     })
     .join("\n\n");
 
+  // 오라클 스프레드인지 확인 (카드가 1장인 경우)
+  const isOracleSpread = reading.drawnCards.length === 1;
+
   const prompt = `당신은 경험이 풍부한 타로 마스터입니다. 다음 오늘 뭐 뽑지?을 깊이 있게 해석해주세요.
 
   질문: "${reading.question}"
@@ -49,8 +52,12 @@ export async function generateTarotReading(
 
   전체적인 메시지: (질문에 대한 전반적인 답변과 통찰, 3-4문장)
 
-  개별 카드 해석:
-  ${reading.drawnCards.map((_, index) => `${index + 1}. (카드 이름과 위치에 따른 구체적인 해석, 2-3문장)`).join("\n")}
+  ${
+    isOracleSpread
+      ? "카드 해석: (이 카드의 구체적인 해석 내용만, 카드명이나 위치명은 언급하지 말고 해석 내용만 3-4문장으로)"
+      : `개별 카드 해석:
+  ${reading.drawnCards.map((_, index) => `${index + 1}. (해당 카드의 구체적인 해석 내용만, 카드명이나 위치명은 언급하지 말고 해석 내용만 2-3문장으로)`).join("\n")}`
+  }
 
   조언: (질문자에게 주는 실용적인 조언과 지침, 3-4문장)
 
@@ -91,36 +98,106 @@ export async function generateTarotReading(
     // Parse the AI response into structured format
     const sections = response.split("\n\n");
 
-    // Extract overall reading
-    const overallMatch = response.match(
-      /전체적인 메시지:\s*(.*?)(?=\n\n개별 카드 해석:|$)/s
-    );
+    // Extract overall reading - 오라클 스프레드와 멀티 카드 스프레드를 구분하여 처리
+    let overallMatch;
+    if (isOracleSpread) {
+      overallMatch = response.match(
+        /전체적인 메시지:\s*(.*?)(?=(?:\n\n카드 해석:|\n카드 해석:|카드 해석:|조언:|핵심 메시지:|$))/s
+      );
+    } else {
+      overallMatch = response.match(
+        /전체적인 메시지:\s*(.*?)(?=(?:\n\n개별 카드 해석:|\n개별 카드 해석:|개별 카드 해석:|조언:|핵심 메시지:|$))/s
+      );
+    }
     const overallReading = overallMatch
       ? overallMatch[1].trim()
-      : sections[0] || "타로 카드가 당신의 질문에 대한 깊은 통찰을 제공합니다.";
+      : "타로 카드가 당신의 질문에 대한 깊은 통찰을 제공합니다.";
 
     // Extract advice
-    const adviceMatch = response.match(/조언:\s*(.*?)(?=\n\n핵심 메시지:|$)/s);
+    const adviceMatch = response.match(
+      /조언:\s*(.*?)(?=(?:\n\n핵심 메시지:|\n핵심 메시지:|핵심 메시지:|$))/s
+    );
     const advice = adviceMatch
       ? adviceMatch[1].trim()
       : "카드의 메시지를 마음에 새기고 긍정적인 마음으로 나아가세요.";
 
     // Extract summary
-    const summaryMatch = response.match(/핵심 메시지:\s*(.*?)$/s);
+    const summaryMatch = response.match(/핵심 메시지:\s*(.*?)(?=\n|$)/s);
     const summary = summaryMatch
       ? summaryMatch[1].trim()
       : "모든 답은 이미 당신 안에 있습니다.";
 
     // Create card interpretations
     const cardInterpretations = reading.drawnCards.map((drawnCard, index) => {
-      const cardRegex = new RegExp(
-        `${index + 1}\\.\\s*(.*?)(?=(?:조언:|핵심 메시지:|\\n\\d+\\.|$))`,
-        "s"
-      );
-      const cardMatch = response.match(cardRegex);
-      const interpretation = cardMatch
-        ? cardMatch[1].trim()
-        : `${drawnCard.card.nameKo}이 ${drawnCard.position.nameKo} 위치에서 ${drawnCard.isReversed ? "역방향으로 " : ""}나타나 당신에게 중요한 메시지를 전달합니다.`;
+      let interpretation = "";
+
+      if (isOracleSpread) {
+        // 오라클 스프레드: "카드 해석:" 섹션 찾기
+        const oracleMatch = response.match(
+          /카드 해석:\s*(.*?)(?=(?:\n\n조언:|\n조언:|조언:|\n\n핵심 메시지:|\n핵심 메시지:|핵심 메시지:|$))/s
+        );
+        interpretation = oracleMatch
+          ? oracleMatch[1].trim()
+          : `${drawnCard.card.nameKo}이 ${drawnCard.position.nameKo} 위치에서 ${drawnCard.isReversed ? "역방향으로 " : ""}나타나 당신에게 중요한 메시지를 전달합니다.`;
+      } else {
+        // 멀티 카드 스프레드: 기존 로직 사용
+        let cardRegex = new RegExp(
+          `${index + 1}\\.\\s*(.*?)(?=(?:조언:|핵심 메시지:|\\n\\d+\\.|$))`,
+          "s"
+        );
+        let cardMatch = response.match(cardRegex);
+
+        // 숫자 형식이 없다면 다른 패턴들을 시도
+        if (!cardMatch) {
+          const dashPatterns = response.split(/\n\s*-\s+/);
+          if (dashPatterns.length > index + 1) {
+            cardMatch = [
+              null,
+              dashPatterns[index + 1].split(/(?:조언:|핵심 메시지:)/)[0],
+            ];
+          }
+        }
+
+        // 여전히 없다면 줄바꿈으로 분리해서 순서대로 매칭
+        if (!cardMatch) {
+          const lines = response
+            .split("\n")
+            .filter(
+              (line) =>
+                line.trim() &&
+                !line.includes("전체적인 메시지:") &&
+                !line.includes("개별 카드 해석:") &&
+                !line.includes("조언:") &&
+                !line.includes("핵심 메시지:")
+            );
+
+          let interpretationSection = false;
+          let interpretationLines = [];
+
+          for (const line of lines) {
+            if (line.includes("개별 카드 해석:")) {
+              interpretationSection = true;
+              continue;
+            }
+            if (line.includes("조언:") || line.includes("핵심 메시지:")) {
+              interpretationSection = false;
+              break;
+            }
+            if (interpretationSection && line.trim()) {
+              interpretationLines.push(line.trim());
+            }
+          }
+
+          if (interpretationLines[index]) {
+            cardMatch = [null, interpretationLines[index]];
+          }
+        }
+
+        interpretation =
+          cardMatch && cardMatch[1]
+            ? cardMatch[1].trim()
+            : `${drawnCard.card.nameKo}이 ${drawnCard.position.nameKo} 위치에서 ${drawnCard.isReversed ? "역방향으로 " : ""}나타나 당신에게 중요한 메시지를 전달합니다.`;
+      }
 
       return {
         cardName: drawnCard.card.nameKo,
