@@ -7,6 +7,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Fool',
     nameKo: '바보',
     suit: 'major',
+    image: '/tarot_card/0_the_fool.png',
+    emoji: '🃏',
     meaning: {
       upright: 'New beginnings, spontaneity, innocence, free spirit',
       reversed: 'Recklessness, taken advantage of, inconsideration'
@@ -23,6 +25,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Magician',
     nameKo: '마법사',
     suit: 'major',
+    image: '/tarot_card/1_the_magacian.png',
+    emoji: '🎩',
     meaning: {
       upright: 'Manifestation, resourcefulness, power, inspired action',
       reversed: 'Manipulation, poor planning, untapped talents'
@@ -39,6 +43,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The High Priestess',
     nameKo: '여교황',
     suit: 'major',
+    image: '/tarot_card/2_the_highpriestess.png',
+    emoji: '🌙',
     meaning: {
       upright: 'Intuition, sacred knowledge, divine feminine, subconscious mind',
       reversed: 'Secrets, disconnected from intuition, withdrawal'
@@ -55,6 +61,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Empress',
     nameKo: '여황제',
     suit: 'major',
+    image: '/tarot_card/3_the_empress.png',
+    emoji: '👑',
     meaning: {
       upright: 'Femininity, beauty, nature, nurturing, abundance',
       reversed: 'Creative block, dependence on others'
@@ -71,6 +79,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Emperor',
     nameKo: '황제',
     suit: 'major',
+    image: '/tarot_card/4_the_emperor.png',
+    emoji: '🏛️',
     meaning: {
       upright: 'Authority, establishment, structure, father figure',
       reversed: 'Domination, excessive control, lack of discipline'
@@ -87,6 +97,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Hierophant',
     nameKo: '교황',
     suit: 'major',
+    image: '/tarot_card/5_the_hierophant.png',
+    emoji: '⛪',
     meaning: {
       upright: 'Spiritual wisdom, religious beliefs, conformity, tradition',
       reversed: 'Personal beliefs, freedom, challenging the status quo'
@@ -103,6 +115,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Lovers',
     nameKo: '연인',
     suit: 'major',
+    image: '/tarot_card/6_the_lovers.png',
+    emoji: '💑',
     meaning: {
       upright: 'Love, harmony, relationships, values alignment',
       reversed: 'Self-love, disharmony, imbalance, misalignment'
@@ -119,6 +133,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Chariot',
     nameKo: '전차',
     suit: 'major',
+    image: '/tarot_card/7_the_chariot.png',
+    emoji: '🏎️',
     meaning: {
       upright: 'Control, willpower, success, determination',
       reversed: 'Self-discipline, opposition, lack of direction'
@@ -135,6 +151,8 @@ export const tarotCards: TarotCard[] = [
     name: 'Strength',
     nameKo: '힘',
     suit: 'major',
+    image: '/tarot_card/8_strength.png',
+    emoji: '🦁',
     meaning: {
       upright: 'Strength, courage, persuasion, influence, compassion',
       reversed: 'Self-doubt, lack of confidence, low energy'
@@ -151,6 +169,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Hermit',
     nameKo: '은둔자',
     suit: 'major',
+    image: '/tarot_card/9_the_hermit.png',
+    emoji: '🎆',
     meaning: {
       upright: 'Soul searching, introspection, being alone, inner guidance',
       reversed: 'Isolation, loneliness, withdrawal'
@@ -167,6 +187,8 @@ export const tarotCards: TarotCard[] = [
     name: 'Wheel of Fortune',
     nameKo: '운명의 수레바퀴',
     suit: 'major',
+    image: '/tarot_card/10_the_wheel_of_fortune.png',
+    emoji: '🎰',
     meaning: {
       upright: 'Good luck, karma, life cycles, destiny, turning point',
       reversed: 'Bad luck, lack of control, clinging to control'
@@ -183,6 +205,8 @@ export const tarotCards: TarotCard[] = [
     name: 'Justice',
     nameKo: '정의',
     suit: 'major',
+    image: '/tarot_card/11_justice.png',
+    emoji: '⚖️',
     meaning: {
       upright: 'Justice, fairness, truth, cause and effect, law',
       reversed: 'Unfairness, lack of accountability, dishonesty'
@@ -199,6 +223,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Hanged Man',
     nameKo: '매달린 사람',
     suit: 'major',
+    image: '/tarot_card/12_the_hangman.png',
+    emoji: '😵',
     meaning: {
       upright: 'Suspension, restriction, letting go, sacrifice',
       reversed: 'Martyrdom, indecision, delay'
@@ -215,6 +241,8 @@ export const tarotCards: TarotCard[] = [
     name: 'Death',
     nameKo: '죽음',
     suit: 'major',
+    image: '/tarot_card/13_death.png',
+    emoji: '☠️',
     meaning: {
       upright: 'Endings, beginnings, change, transformation, transition',
       reversed: 'Resistance to change, personal transformation, inner purging'
@@ -231,6 +259,8 @@ export const tarotCards: TarotCard[] = [
     name: 'Temperance',
     nameKo: '절제',
     suit: 'major',
+    image: '/tarot_card/14_temperance.png',
+    emoji: '♾️',
     meaning: {
       upright: 'Balance, moderation, patience, purpose',
       reversed: 'Imbalance, excess, self-healing, re-alignment'
@@ -247,6 +277,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Devil',
     nameKo: '악마',
     suit: 'major',
+    image: '/tarot_card/15_the_devil.png',
+    emoji: '😈',
     meaning: {
       upright: 'Bondage, addiction, sexuality, materialism',
       reversed: 'Liberation, independence, overcoming addiction'
@@ -263,6 +295,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Tower',
     nameKo: '탑',
     suit: 'major',
+    image: '/tarot_card/16_the_tower.png',
+    emoji: '🏰',
     meaning: {
       upright: 'Sudden change, upheaval, chaos, revelation, awakening',
       reversed: 'Personal transformation, fear of change, averting disaster'
@@ -279,6 +313,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Star',
     nameKo: '별',
     suit: 'major',
+    image: '/tarot_card/17_the_star.png',
+    emoji: '⭐',
     meaning: {
       upright: 'Hope, faith, purpose, renewal, spirituality',
       reversed: 'Lack of faith, despair, self-trust, disconnection'
@@ -295,6 +331,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Moon',
     nameKo: '달',
     suit: 'major',
+    image: '/tarot_card/18_the_moon.png',
+    emoji: '🌜',
     meaning: {
       upright: 'Illusion, fear, anxiety, subconscious, intuition',
       reversed: 'Release of fear, repressed emotion, inner confusion'
@@ -311,6 +349,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The Sun',
     nameKo: '태양',
     suit: 'major',
+    image: '/tarot_card/19_the_sun.png',
+    emoji: '☀️',
     meaning: {
       upright: 'Positivity, fun, warmth, success, vitality',
       reversed: 'Inner child, feeling down, overly optimistic'
@@ -327,6 +367,8 @@ export const tarotCards: TarotCard[] = [
     name: 'Judgement',
     nameKo: '심판',
     suit: 'major',
+    image: '/tarot_card/20_judgement.png',
+    emoji: '🎺',
     meaning: {
       upright: 'Judgement, rebirth, inner calling, absolution',
       reversed: 'Self-doubt, inner critic, ignoring the call'
@@ -343,6 +385,8 @@ export const tarotCards: TarotCard[] = [
     name: 'The World',
     nameKo: '세계',
     suit: 'major',
+    image: '/tarot_card/21_the_world.png',
+    emoji: '🌍',
     meaning: {
       upright: 'Completion, accomplishment, travel, fulfillment',
       reversed: 'Seeking personal closure, short-cut to success'
