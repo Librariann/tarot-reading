@@ -201,7 +201,7 @@ export default function RevealCards() {
                   }
                 >
                   <motion.div
-                    className="relative w-32 h-48 rounded-xl"
+                    className="relative w-36 h-56 rounded-lg"
                     style={{ transformStyle: "preserve-3d" }}
                     animate={{
                       rotateY: revealedCards[index] ? 180 : 0,
@@ -210,7 +210,7 @@ export default function RevealCards() {
                   >
                     {/* Card Back */}
                     <div
-                      className="absolute inset-0 rounded-xl border-2 border-purple-300 bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center shadow-lg"
+                      className="absolute inset-0 rounded-lg border-2 border-purple-300 bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center shadow-lg"
                       style={{ backfaceVisibility: "hidden" }}
                     >
                       <div className="text-white text-4xl">🌟</div>
@@ -218,24 +218,24 @@ export default function RevealCards() {
 
                     {/* Card Front */}
                     <div
-                      className="absolute inset-0 rounded-xl border-2 border-gold-300 bg-gradient-to-br from-amber-50 to-yellow-100 flex flex-col items-center justify-center shadow-lg p-2"
+                      className="absolute inset-0 rounded-lg border-2 border-gray-300 bg-white shadow-lg overflow-hidden"
                       style={{
                         backfaceVisibility: "hidden",
                         transform: "rotateY(180deg)",
                       }}
                     >
-                      <div className="text-center">
-                        <div className="text-xs font-medium text-purple-800 mb-1">
-                          {drawnCard.card.nameKo}
+                      <div
+                        className={`h-full ${drawnCard.isReversed ? "rotate-180" : ""}`}
+                      >
+                        {/* Card Image - 전체 카드를 채움 */}
+                        <div className="w-full h-full p-1">
+                          <img
+                            src={drawnCard.card.image}
+                            alt={drawnCard.card.nameKo}
+                            className="w-full h-full object-cover rounded-sm"
+                            loading="eager"
+                          />
                         </div>
-                        <div className="text-purple-700 text-2xl mb-1">
-                          {drawnCard.card.emoji}
-                        </div>
-                        {drawnCard.isReversed && (
-                          <div className="text-xs text-red-600 font-medium">
-                            역방향
-                          </div>
-                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -252,7 +252,8 @@ export default function RevealCards() {
                       className="mt-3 text-center max-w-32"
                     >
                       <div className="text-white font-medium text-sm mb-1">
-                        {drawnCard.card.nameKo}
+                        {drawnCard.card.id}. {drawnCard.card.nameKo}(
+                        {drawnCard.isReversed ? "역방향" : "정방향"})
                       </div>
                       <div className="text-purple-200 text-xs">
                         {drawnCard.card.keywordsKo?.slice(0, 2).join(", ")}
@@ -316,7 +317,7 @@ export default function RevealCards() {
                 className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 disabled:from-gray-500 disabled:to-gray-600 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg transform hover:scale-105"
               >
                 {fetcher.state === "submitting" || fetcher.state === "loading"
-                  ? "해석 생성 중..."
+                  ? "해석 중..."
                   : "타로 해석 보기 ✨"}
               </button>
             </div>
