@@ -44,29 +44,27 @@ function DrawnCardComponent({
       <div className="flex gap-6 items-start">
         {/* Card Visual */}
         <motion.div
-          className={`w-24 h-36 bg-gradient-to-br ${
-            isReversed
-              ? "from-red-500 to-orange-500"
-              : "from-purple-600 to-indigo-600"
-          } rounded-xl border-2 border-white/30 flex flex-col items-center justify-center text-white font-semibold text-center shadow-xl relative ${
+          className={`w-28 h-40 bg-white rounded-lg border-2 border-white/30 shadow-xl relative overflow-hidden ${
             isReversed ? "rotate-180" : ""
           }`}
           whileHover={{ scale: 1.05 }}
         >
-          <div className="text-2xl mb-2">🔮</div>
-          <div className="text-xs leading-tight px-2">{card.nameKo}</div>
-          {isReversed && (
-            <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-              R
-            </div>
-          )}
+          {/* Card Image - 전체 카드를 채움 */}
+          <div className="w-full h-full p-1">
+            <img
+              src={card.image}
+              alt={card.nameKo}
+              className="w-full h-full object-cover rounded-sm"
+              loading="lazy"
+            />
+          </div>
         </motion.div>
 
         {/* Card Information */}
         <div className="flex-1">
           <div className="mb-4">
             <h4 className="text-lg font-semibold text-white mb-1">
-              {card.nameKo} {isReversed ? "(역방향)" : "(정방향)"}
+              {card.id}. {card.nameKo} {isReversed ? "(역방향)" : "(정방향)"}
             </h4>
             <p className="text-sm text-purple-200 italic">{card.name}</p>
           </div>
@@ -152,7 +150,7 @@ export default function ReadingResult() {
             <div className="bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-lg rounded-2xl border border-indigo-300/20 p-8">
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-bold text-white mb-2 flex items-center justify-center gap-2">
-                  🤖 AI 타로 마스터의 해석
+                  🃏 타로 마스터의 해석
                 </h2>
                 <p className="text-indigo-200">
                   깊은 통찰과 지혜로 카드를 해석합니다
@@ -220,7 +218,7 @@ export default function ReadingResult() {
               <div className="text-center">
                 <div className="bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-xl p-6 border border-purple-300/20">
                   <h3 className="text-xl font-semibold text-white mb-4">
-                    마음에 새길 말씀
+                    타로의 메시지
                   </h3>
                   <p className="text-purple-100 text-lg font-medium">
                     {reading.aiInterpretation.summary}
@@ -253,9 +251,10 @@ export default function ReadingResult() {
             리딩을 마치며
           </h3>
           <p className="text-purple-100 mb-6 leading-relaxed max-w-2xl mx-auto">
-            AI와 타로의 지혜가 합쳐진 이 해석이 당신에게 도움이 되기를 바랍니다.
-            최종적인 선택과 결정은 언제나 당신의 몫입니다. 긍정적인 마음으로
-            미래를 만들어 나가세요.
+            타로의 지혜가 합쳐진 이 해석이 당신에게 도움이 되기를 바랍니다.{" "}
+            <br />
+            최종적인 선택과 결정은 언제나 당신의 몫입니다. <br />
+            긍정적인 마음으로 미래를 만들어 나가세요.
           </p>
           <motion.button
             onClick={handleNewReading}
