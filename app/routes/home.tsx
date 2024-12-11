@@ -44,7 +44,7 @@ export default function Home() {
           >
             🔮
           </motion.div>
-          <h1 className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-yellow-200 to-pink-200 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-200 to-pink-200 bg-clip-text text-transparent">
             오늘 뭐 뽑지?
           </h1>
           <p className="text-xl text-purple-100">당신의 미래를 들여다보세요</p>

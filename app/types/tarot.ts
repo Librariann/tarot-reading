@@ -3,6 +3,8 @@ export interface TarotCard {
   name: string;
   nameKo: string;
   suit: 'major' | 'wands' | 'cups' | 'swords' | 'pentacles';
+  image: string;
+  emoji: string;
   meaning: {
     upright: string;
     reversed: string;
@@ -13,7 +15,6 @@ export interface TarotCard {
   };
   keywords: string[];
   keywordsKo: string[];
-  imageUrl?: string;
 }
 
 export interface TarotSpread {
